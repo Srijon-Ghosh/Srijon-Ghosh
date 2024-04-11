@@ -1,0 +1,83 @@
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+public class AirlineReservationSystem extends Application {
+
+    private GridPane root; // Declare root as a class-level variable
+
+    // Define the seating arrangement (for demonstration purposes)
+    private boolean[][] seats = new boolean[6][4]; // 6 rows, 4 columns
+
+    @Override
+    public void start(Stage primaryStage) {
+        root = new GridPane(); // Initialize root
+        root.setPadding(new Insets(10));
+        root.setHgap(10);
+        root.setVgap(10);
+
+        // Call the method to retrieve booking information and update UI
+        retrieveBookingInformation();
+
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Airline Reservation System");
+        primaryStage.show();
+    }
+
+    // Method to retrieve latest booking information from the database
+    private void retrieveBookingInformation() {
+        // Simulate retrieving latest booking information from the database
+        // Update the 'seats' array based on the retrieved information
+        // For demonstration purposes, mark some seats as pre-booked
+        seats[2][1] = true;
+        seats[4][2] = true;
+
+        // Create seat buttons and set their properties based on booking status
+        for (int row = 0; row < seats.length; row++) {
+            for (int col = 0; col < seats[row].length; col++) {
+                Button seatBtn = new Button("Seat " + (row + 1) + "-" + (col + 1));
+                seatBtn.setMinSize(80, 40); // Adjust size as needed
+
+                if (seats[row][col]) {
+                    seatBtn.setStyle("-fx-background-color: red;"); // Pre-booked seat
+                    seatBtn.setDisable(true); // Disable pre-booked seat
+                } else {
+                    // Available seat (customize appearance as needed)
+                    seatBtn.setStyle("-fx-background-color: green;");
+                    seatBtn.setOnAction(e -> bookSeat(row, col)); // Pass 'row' and 'col' as arguments
+                }
+
+                root.add(seatBtn, col, row);
+            }
+        }
+    }
+
+    // Method to handle seat booking
+    private void bookSeat(int row, int col) {
+        System.out.println("Seat " + (row + 1) + "-" + (col + 1) + " booked!");
+        // Update booking status in the database
+        seats[row][col] = true;
+        // Update UI to reflect the booking
+        Button seatBtn = (Button) getNodeFromGridPane(row, col);
+        seatBtn.setStyle("-fx-background-color: red;");
+        seatBtn.setDisable(true);
+    }
+
+    // Method to get a node from the GridPane by row and column indices
+    private javafx.scene.Node getNodeFromGridPane(int row, int col) {
+        for (javafx.scene.Node node : root.getChildren()) {
+            if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        launch(args); // Launch the JavaFX application
+    }
+}
